@@ -1,0 +1,4 @@
+.stack-work/
+*~
+
+/eval-order-poly.cabal

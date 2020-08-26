@@ -1,0 +1,54 @@
+name:                eval-order-poly
+version:             0.1.0.0
+github:              "elpinal/eval-order-poly-hs"
+license:             MIT
+author:              "El Pin Al"
+maintainer:          ""
+copyright:           "2020 El Pin Al"
+
+extra-source-files:
+- README.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/elpinal/eval-order-poly-hs#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- containers >= 0.6.2.1
+- fused-effects >= 1.0.2.2
+- megaparsec >= 8.0.0
+- parser-combinators >= 1.2.1
+- recursion-schemes >= 5.1.3
+- text >= 1.2.4.0
+
+library:
+  source-dirs: src
+
+executables:
+  eval-order-poly-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - eval-order-poly
+
+tests:
+  eval-order-poly-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - eval-order-poly
+    - hspec >= 2.7.2
