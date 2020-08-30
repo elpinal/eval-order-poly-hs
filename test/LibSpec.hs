@@ -21,10 +21,13 @@ newtype EType = EType (Type Economical)
 instance Eq EType where
   EType x == EType y = run $ evalFresh 0 $ equiv x y
 
+fromString' :: String -> Either String (EType, Valueness)
 fromString' = second (first EType) . fromString
 
+result :: (Type Economical, a) -> Either e (EType, a)
 result = Right . first EType
 
+bound :: Int -> Fix (TypeF Economical)
 bound n = Fix $ Var $ Bound n
 
 spec :: Spec
