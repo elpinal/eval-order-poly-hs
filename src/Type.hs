@@ -10,9 +10,8 @@ module Type
   ( Type
   , TypeF(..)
 
-  , XForall
+  , XTBinding
   , XD
-  , XRec
   , XVar
   , XType
 
@@ -37,11 +36,11 @@ import EvalOrder
 data TypeF x a
   = Unit
   | Var (XVar x)
-  | Forall (XForall x) a
+  | Forall (XTBinding x) a
   | Arrow a a
   | Prod a a
   | Sum a a
-  | Rec (XRec x) a
+  | Rec (XTBinding x) a
   | XType !(XType x a)
 
 deriving instance Functor (XType x) => Functor (TypeF x)
@@ -53,10 +52,8 @@ data EcoExt x a
   | Suspend (EvalOrder x) a
   deriving Functor
 
--- TODO: Combine `XForall` and `XRec`.
-type family XForall x
+type family XTBinding x
 type family XD x
-type family XRec x
 type family XVar x
 
 type family XType x :: * -> *
@@ -92,6 +89,6 @@ getArrow :: Has (Throw (TypeStructureError x)) sig m => Type x -> m (Type x, Typ
 getArrow (Fix (Arrow x y)) = return (x, y)
 getArrow ty                = throwError $ NotArrow ty
 
-getForall :: Has (Throw (TypeStructureError x)) sig m => Type x -> m (XForall x, Type x)
+getForall :: Has (Throw (TypeStructureError x)) sig m => Type x -> m (XTBinding x, Type x)
 getForall (Fix (Forall x y)) = return (x, y)
 getForall ty                 = throwError $ NotForall ty

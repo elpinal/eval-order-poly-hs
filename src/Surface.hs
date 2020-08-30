@@ -21,9 +21,8 @@ newtype EvalVar = EvalVar String
 
 data Surface
 
-type instance XForall Surface = TypeVar
+type instance XTBinding Surface = TypeVar
 type instance XD Surface = EvalVar
-type instance XRec Surface = TypeVar
 type instance XVar Surface = TypeVar
 type instance XType Surface = EcoExt Surface
 

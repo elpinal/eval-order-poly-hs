@@ -36,7 +36,7 @@ data TermF x a
   | Abs Variable a
   | App a a
   | Fix Variable a
-  | Gen (T.XForall x) a
+  | Gen (T.XTBinding x) a
   | Inst a (T.Type x)
   | Ascribe a (T.Type x)
   | Pair a a

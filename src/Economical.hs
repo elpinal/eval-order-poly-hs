@@ -52,9 +52,8 @@ import Type
 
 data Economical
 
-type instance XForall Economical = ()
+type instance XTBinding Economical = ()
 type instance XD Economical = ()
-type instance XRec Economical = ()
 type instance XVar Economical = Variable FTVar
 type instance XType Economical = EcoExt Economical
 
