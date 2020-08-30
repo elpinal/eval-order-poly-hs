@@ -11,11 +11,15 @@ module Term
   ) where
 
 import Data.Functor.Foldable
+import Data.Text.Prettyprint.Doc
 
 import qualified Type as T
 
 newtype Variable = Variable String
   deriving (Eq, Ord, Show)
+
+instance Pretty Variable where
+  pretty (Variable s) = pretty s
 
 data Index
   = Fst

@@ -1,4 +1,5 @@
 {-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
@@ -16,6 +17,7 @@ module Env
 
 import Data.Coerce
 import qualified Data.Map.Strict as Map
+import Data.Text.Prettyprint.Doc
 
 import Control.Effect.Throw
 import Control.Effect.Reader
@@ -35,6 +37,9 @@ data Sort
 data EnvError
   = Unbound Variable
   deriving (Eq, Show)
+
+instance Pretty EnvError where
+  pretty (Unbound v) = "unbound variable:" <+> pretty v
 
 type Environ x sig m = (Has (Reader (Env x)) sig m, Has (Throw EnvError) sig m)
 

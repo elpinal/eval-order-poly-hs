@@ -272,10 +272,10 @@ data TypeError
   | forall a. CannotSynthesize (T.TermF Economical a)
   | TypeMismatch (Type Economical) (Type Economical)
 
-instance Show TypeError where
-  show ValueRestriction     = "value restriction"
-  show (CannotSynthesize t) = "cannot synthesize type from this form of expression: " ++ T.getForm t
-  show (TypeMismatch x y)   = "type mismatch: " ++ show x ++ " vs " ++ show y
+instance Pretty TypeError where
+  pretty ValueRestriction     = "value restriction"
+  pretty (CannotSynthesize t) = "cannot synthesize type from this form of expression:" <+> pretty (T.getForm t)
+  pretty (TypeMismatch x y)   = "type mismatch:" <+> pretty x <+> "vs" <+> pretty y
 
 type Effs sig m =
   ( Has (Throw (TypeStructureError Economical)) sig m
@@ -382,11 +382,11 @@ data Errors
   | T TypeError
   | E Env.EnvError
 
-instance Show Errors where
-  show = \case
-    TS e -> show e
-    T e  -> show e
-    E e  -> show e
+instance Pretty Errors where
+  pretty = \case
+    TS e -> pretty e
+    T e  -> pretty e
+    E e  -> pretty e
 
 runIt :: ThrowC (TypeStructureError Economical) (ThrowC TypeError (F.FreshC (ThrowC Env.EnvError (R.ReaderC (Env.Env Economical) Identity)))) a
     -> Either Env.EnvError (Either TypeError (Either (TypeStructureError Economical) a))

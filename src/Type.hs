@@ -1,5 +1,7 @@
 {-# LANGUAGE DeriveFunctor #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -27,6 +29,7 @@ module Type
 
 import Control.Effect.Throw
 import Data.Functor.Foldable
+import Data.Text.Prettyprint.Doc
 
 import EvalOrder
 
@@ -65,7 +68,13 @@ data TypeStructureError x
   | NotArrow (Type x)
   | NotForall (Type x)
 
-deriving instance Show (Type x) => Show (TypeStructureError x)
+instance Pretty (Type x) => Pretty (TypeStructureError x) where
+  pretty = \case
+    NotUnit ty   -> "not unit type:" <+> pretty ty
+    NotProd ty   -> "not product type:" <+> pretty ty
+    NotSum ty    -> "not sum type:" <+> pretty ty
+    NotArrow ty  -> "not arrow type:" <+> pretty ty
+    NotForall ty -> "not universal type:" <+> pretty ty
 
 getUnit :: Has (Throw (TypeStructureError x)) sig m => Type x -> m ()
 getUnit (Fix Unit) = return ()

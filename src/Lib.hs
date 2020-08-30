@@ -7,6 +7,7 @@ import Data.Bifunctor
 
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
+import Data.Text.Prettyprint.Doc
 import Text.Megaparsec hiding (parse)
 
 import Economical
@@ -23,10 +24,10 @@ fromFile file = do
       case fromSurface t of
         Left e -> putStrLn $ show e
         Right t -> case synth t of
-          Left e -> print e
+          Left e -> print $ pretty e
           Right (ty, vn) -> do
             putStrLn $ "valueness: " ++ show vn
-            putStrLn $ "type: " ++ show ty
+            putStrLn $ "type: " ++ show (pretty ty)
 
 fromString :: String -> Either String (Type Economical, Valueness)
 fromString input =
@@ -35,4 +36,4 @@ fromString input =
     Right t ->
       case fromSurface t of
         Left e -> Left $ show e
-        Right t -> first show $ synth t
+        Right t -> first (show . pretty) $ synth t
