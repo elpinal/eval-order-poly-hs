@@ -6,6 +6,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeApplications #-}
@@ -31,10 +32,11 @@ module Economical
 import Data.Bifunctor
 import Data.Coerce
 import Data.Functor
-import Data.Functor.Identity
 import Data.Functor.Classes
 import Data.Functor.Foldable
+import Data.Functor.Identity
 import qualified Data.Map.Strict as Map
+import Data.Text.Prettyprint.Doc
 
 import Control.Carrier.Throw.Either
 import qualified Control.Carrier.Fresh.Strict as F
@@ -89,6 +91,30 @@ newtype IdString = IdString String
 
 instance Show IdString where
   show (IdString x) = x
+
+instance Pretty (Type Economical) where
+  pretty = cata alg
+    where
+      alg = \case
+        Unit  -> "1"
+        Var v -> case v of
+          Free (FTVar n) -> "!" <> pretty n
+          Bound n        -> "@" <> pretty n
+        Forall () x -> "∀." <> x
+        Arrow x y   -> x <+> "->" <+> y
+        Prod x y    -> x <+> "*" <+> y
+        Sum x y     -> x <+> "+" <+> y
+        Rec () x    -> "μ." <> x
+        XType (Suspend eo x) -> pretty eo <> "|>" <> x
+        XType (D () x)       -> "Д." <> x
+
+instance Pretty (EvalOrder Economical) where
+  pretty = \case
+    V -> "V"
+    N -> "N"
+    EVar v -> case v of
+      Free (FEVar n) -> "!" <> pretty n
+      Bound n        -> "@" <> pretty n
 
 data ScopeError
   = UnboundTVar
