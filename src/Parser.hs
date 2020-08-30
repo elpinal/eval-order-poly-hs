@@ -165,11 +165,14 @@ table :: [[Operator Parser Type]]
 table =
   [ [binary "*" (\x y -> Fix $ Type.Prod x y)]
   , [binary "+" (\x y -> Fix $ Type.Sum x y)]
-  , [binary "->" (\x y -> Fix $ Type.Arrow x y)]
+  , [binaryR "->" (\x y -> Fix $ Type.Arrow x y)]
   ]
 
 binary :: T.Text -> (a -> a -> a) -> Operator Parser a
 binary name f = InfixL $ f <$ symbol name
+
+binaryR :: T.Text -> (a -> a -> a) -> Operator Parser a
+binaryR name f = InfixR $ f <$ symbol name
 
 typeBin :: Parser Type
 typeBin = choice

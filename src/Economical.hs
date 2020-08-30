@@ -92,21 +92,25 @@ newtype IdString = IdString String
 instance Show IdString where
   show (IdString x) = x
 
+helper :: Int -> Doc ann -> (Int -> Doc ann)
+helper n d ctx = if n < ctx then parens d else d
+
 instance Pretty (Type Economical) where
-  pretty = cata alg
+  pretty = ($ 0) . cata alg
     where
+      alg :: Alg TypeF Economical (Int -> Doc ann)
       alg = \case
-        Unit  -> "1"
-        Var v -> case v of
+        Unit  -> const "1"
+        Var v -> const $ case v of
           Free (FTVar n) -> "!" <> pretty n
           Bound n        -> "@" <> pretty n
-        Forall () x -> "∀." <> x
-        Arrow x y   -> x <+> "->" <+> y
-        Prod x y    -> x <+> "*" <+> y
-        Sum x y     -> x <+> "+" <+> y
-        Rec () x    -> "μ." <> x
-        XType (Suspend eo x) -> pretty eo <> "|>" <> x
-        XType (D () x)       -> "Д." <> x
+        Forall () x -> helper 0 $ "∀." <> x 0
+        Arrow x y   -> helper 6 $ x 7 <+> "->" <+> y 6
+        Prod x y    -> helper 8 $ x 8 <+> "*" <+> y 9
+        Sum x y     -> helper 7 $ x 7 <+> "+" <+> y 8
+        Rec () x    -> helper 0 $ "μ." <> x 0
+        XType (Suspend eo x) -> const $ pretty eo <> "|>" <> x 9
+        XType (D () x)       -> helper 0 $ "Д." <> x 0
 
 instance Pretty (EvalOrder Economical) where
   pretty = \case
